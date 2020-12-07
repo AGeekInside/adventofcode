@@ -1,4 +1,5 @@
 import hashlib
+from pprint import pprint
 import re
 
 import click
@@ -61,19 +62,21 @@ def is_valid(entry):
         valid = False
 
     pid = entry["pid"]
-    if not is_num(pid, 9):
-        # print(f"pid: {pid} is invalid.")
+    if len(pid) == 9:
+        if not all(c in "0123456789" for c in pid):
+            invalid_fields.append("pid")
+            valid = False
+    else:
         invalid_fields.append("pid")
         valid = False
 
     hcl = entry["hcl"]
-    letter_pattern = re.compile("[a-f0-9]+")
     if hcl.startswith('#'):
-        work_hcl = hcl[1:]
+        work_hcl = hcl[1:].strip()
         if not len(work_hcl) == 6:
             invalid_fields.append("hcl")
             valid = False
-        elif letter_pattern.fullmatch(work_hcl) is None: 
+        elif not all(c in "0123456789abcdef" for c in work_hcl):
             invalid_fields.append("hcl")
             valid = False
     else:
@@ -86,7 +89,7 @@ def is_valid(entry):
         if not valid_num(num, 150, 193, length=3):
             invalid_fields.append("hgt")
             valid = False
-    elif hgt.endswith("ft"):
+    elif hgt.endswith("in"):
         num = hgt[:-2]
         if not valid_num(num, 59, 76, length=2):
             invalid_fields.append("hgt")
@@ -95,12 +98,11 @@ def is_valid(entry):
         invalid_fields.append("hgt")
         valid = False
 
-        
+    # if not valid:
+    #     print("--------------------")
+    #     print(entry)
+    #     print(invalid_fields)
 
-    # if len(invalid_fields) > 0:
-        # print("------------------------")
-        # print(invalid_fields)
-        # print(entry)
     return valid
 
 
@@ -159,6 +161,7 @@ def main(inputfile):
     print(f"Valid count: {len(valid_passports)}")
     print(f"Invalid count: {len(invalid_passports)}")
 
-
+    # for valid_passport in valid_passports:
+        # pprint(valid_passport)
 if __name__ == "__main__":
     main()

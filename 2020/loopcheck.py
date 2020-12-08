@@ -18,8 +18,14 @@ def has_loop(instructions):
     in_addr = 0
     execution_step = 0
     accum_value = 0
+
+    has_loop = True
     
     while not done:
+        if in_addr >= len(instructions):
+            done = True
+            break
+
         current_instruction = instructions[in_addr]
         # print(f"Executing inst: [{execution_step}]-[{in_addr}] - {current_instruction}")
 
@@ -30,29 +36,20 @@ def has_loop(instructions):
         step = f"{current_instruction}  |  {new_addr}"
         steps.append(step)
         if new_addr in executed_addrs:
-            print(f"Infinite loop found.")
+            # print(f"Infinite loop found.")
             return True, accum_value
         elif new_addr == termination_addr:
-            print(f"No loop found.")
-            return False, accum_value
+            # print(f"No loop found.")
+            has_loop = False
         if new_addr > len(instructions):
-            print(f"{new_addr} invalid address. Ending")
-            done = True, accum_value
+            # print(f"Executed the last instruction.")
+            done = True
         in_addr = new_addr
         execution_step += 1
 
+    return has_loop, accum_value
 
-@click.command()
-@click.argument("inputfile")
-def main(inputfile):
-
-    print(f"Reading {inputfile}")
-    with open(inputfile, "r") as f:
-        raw_instructions = [line.strip() for line in f.readlines()]
-        
-    instructions = [[inst.split(" ")[0], int(inst.split(" ")[1])] for inst in raw_instructions]
-    print(instructions)
-
+def create_variations(instructions):
     variations_to_check = []
 
     for i, instruction in enumerate(instructions):
@@ -72,17 +69,33 @@ def main(inputfile):
             variations_to_check.append(new_list)
         # pprint(variations_to_check)
     print(f"Found {len(variations_to_check)} variation(s) to check.")
+    return variations_to_check
 
-    loop_present, _ = has_loop(instructions)
+@click.command()
+@click.argument("inputfile")
+def main(inputfile):
 
+    print(f"Reading {inputfile}")
+    with open(inputfile, "r") as f:
+        raw_instructions = [line.strip() for line in f.readlines()]
+        
+    instructions = [[inst.split(" ")[0], int(inst.split(" ")[1])] for inst in raw_instructions]
+    print(instructions)
+
+    variations_to_check = create_variations(instructions)
+    print(f"Found {len(variations_to_check)} variation(s) to check.")
+    
+    loop_present, accum = has_loop(instructions)
+    print(f"Initial loop accum : {accum}")
     if loop_present:
         print(f"Initial instructions have a loop.")
         print("Checking variations")
         for i, variation in enumerate(variations_to_check):
-            print(f"-----> Checking [{i}] variation")
-            pprint(variation)
+            # print(f"-----> Checking [{i}] variation")
+            # pprint(variation)
             loop_present, accum_value = has_loop(variation)
             if not loop_present:
+                print(variation)
                 print(f"loop_present: {loop_present}, accum_value: {accum_value}")
 
     # print(f"loop_present : {loop_present}")
@@ -93,8 +106,6 @@ def process_inst(current_instruction, in_addr, accum_value):
     new_addr = in_addr
     inst = current_instruction[0]
     value = current_instruction[1]
-    # inst, value = current_instruction.split(" ")
-    # value = int(value)
 
     if inst == "nop":
         new_addr += 1

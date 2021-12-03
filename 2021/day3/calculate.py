@@ -91,15 +91,12 @@ def process_readings(readings):
 def plot(inputfile):
 
     readings = inputfile.readlines()
-    # readings = [reading.strip() for reading in readings]
 
     print(f"Found {len(readings)} reading(s).")
 
     rates = process_readings(readings)
 
     print(f"{rates=}")
-    # print(f'{rates["gamma_rate"]=}')
-    # print(f'{rates["epsilon_rate"]=}')
     power_consumption = rates["gamma_rate"] * rates["epsilon_rate"]
     life_support = rates["ox_gen_rating"] * rates["co2_gen_rating"]
     print(f"{power_consumption=}")

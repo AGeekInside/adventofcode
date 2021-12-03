@@ -1,8 +1,9 @@
 import click
 
 
-def calc_rating(ones_count, readings, spot, comp_func):
+def calc_rating(readings, spot, comp_func):
 
+    ones_count = count_ones(readings)
     if len(readings) == 1:
         return readings[0]
     else:
@@ -15,7 +16,7 @@ def calc_rating(ones_count, readings, spot, comp_func):
             if reading[spot] == value_to_use:
                 filtered_readings.append(reading)
 
-        return calc_rating(count_ones(filtered_readings), filtered_readings, spot+1, comp_func)
+        return calc_rating(filtered_readings, spot+1, comp_func)
 
 def ox_comp_func(one_count, zero_count):
     if one_count >= zero_count:
@@ -23,9 +24,9 @@ def ox_comp_func(one_count, zero_count):
     else:
         return '0'
 
-def calc_ox_rating(ones_count, readings):
+def calc_ox_rating(readings):
     start_spot = 0
-    ox_rating = calc_rating(ones_count, readings, start_spot, ox_comp_func)
+    ox_rating = calc_rating(readings, start_spot, ox_comp_func)
     return ox_rating
 
 def co2_comp_func(one_count, zero_count):
@@ -34,11 +35,10 @@ def co2_comp_func(one_count, zero_count):
     else:
         return '1'
 
-def calc_co2_rating(ones_count, readings):
-    # print("STARTING CO2 RATING CALC")
+def calc_co2_rating(readings):
 
     start_spot = 0
-    co2_rating = calc_rating(ones_count, readings, start_spot, co2_comp_func)
+    co2_rating = calc_rating(readings, start_spot, co2_comp_func)
     return co2_rating
 
 def count_ones(readings):
@@ -76,8 +76,8 @@ def process_readings(readings):
     epsilon_rate = int('0b' + ''.join(epsilon_rate), 2)
     # print(ones_count)
 
-    ox_gen_rating = int('0b' + calc_ox_rating(ones_count, readings), 2)
-    co2_gen_rating = int('0b' + calc_co2_rating(ones_count, readings), 2)
+    ox_gen_rating = int('0b' + calc_ox_rating(readings), 2)
+    co2_gen_rating = int('0b' + calc_co2_rating(readings), 2)
     rates = {
         "gamma_rate": gamma_rate,
         "epsilon_rate": epsilon_rate,

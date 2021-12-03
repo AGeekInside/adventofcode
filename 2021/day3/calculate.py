@@ -1,24 +1,15 @@
 import click
-import tqdm
 
 
 def calc_rating(ones_count, readings, spot, comp_func):
 
-    # print(f"{ones_count=}")
-    # print(f"{readings=}")
-    # print(f"{spot=}")
     if len(readings) == 1:
-        return readings
+        return readings[0]
     else:
         num_readings = len(readings)
         one_count = ones_count[spot]
         zero_count = num_readings - ones_count[spot]
         value_to_use = comp_func(one_count, zero_count) 
-        # print(f"{num_readings=}")
-        # print(f"{one_count=}")
-        # print(f"{zero_count=}")
-        # print(f"{value_to_use=}")
-        # print("*******************")
         filtered_readings = []
         for reading in readings:
             if reading[spot] == value_to_use:
@@ -85,8 +76,8 @@ def process_readings(readings):
     epsilon_rate = int('0b' + ''.join(epsilon_rate), 2)
     # print(ones_count)
 
-    ox_gen_rating = int('0b' + calc_ox_rating(ones_count, readings)[0], 2)
-    co2_gen_rating = int('0b' + calc_co2_rating(ones_count, readings)[0], 2)
+    ox_gen_rating = int('0b' + calc_ox_rating(ones_count, readings), 2)
+    co2_gen_rating = int('0b' + calc_co2_rating(ones_count, readings), 2)
     rates = {
         "gamma_rate": gamma_rate,
         "epsilon_rate": epsilon_rate,

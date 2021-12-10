@@ -20,13 +20,9 @@ closer_value = {
 }
 
 def complete_input(state):
-    # ic(state)
-
     needed_closers = []
     for starter in reversed(state["seen_starters"]):
         needed_closers.append(closers[starter])
-
-    # ic(needed_closers)
 
     score = 0
     for closer in needed_closers:
@@ -71,16 +67,10 @@ def process_input(input):
                     state["in_chunk"] = False
                     state["expectect_closer"] = ''
             else:
-                # print("Closer incorrect.")
-                # ic(state)
-                # ic(entry)
                 return False, closer_value[entry]
         else:
             print("Entry not starter or closer.")
-            # ic(entry)
             return False, None
-        # ic(state) 
-    # ic(state)
     if state["in_chunk"]:
         score, closers_needed = complete_input(state)
         return False, [score, closers_needed]
@@ -98,7 +88,6 @@ def process_inputs(inputs):
             "valid": validity,
             "result": result
         }
-        # ic(result)
         results.append(result)
 
     return results
@@ -109,8 +98,6 @@ def process_inputs(inputs):
 def driver(inputfile):
 
     inputs = [line.strip() for line in inputfile.readlines()]
-
-    # ic(inputs)
 
     results = process_inputs(inputs)
 
@@ -128,7 +115,6 @@ def driver(inputfile):
 
     scores = sorted(scores)
     ic(error_score)
-    # ic(scores)
     ic(statistics.median(scores))
 
 if __name__ == "__main__":

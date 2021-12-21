@@ -129,7 +129,7 @@ def driver(inputfile, num_steps, size):
             for val in row:
                 if val > 0:
                     in_synch = False
-        
+         
         if in_synch:
             ic(state)
             not_synched = False
